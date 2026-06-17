@@ -4,11 +4,39 @@ import SearchBar from '../components/SearchBar'
 import CategoryCard from '../components/CategoryCard'
 import SalonCard from '../components/SalonCard'
 import TestimonialCard from '../components/TestimonialCard'
+import { LocationStatusUI } from '../components/LocationStatus'
 import { categories, salons, testimonials } from '../data/mockData'
 
 export default function Home() {
   const [search, setSearch] = useState('')
+  const [locationStatus, setLocationStatus] = useState('idle')
+  const [userLocation, setUserLocation] = useState(null)
+  const [nearbySalons, setNearbySalons] = useState([])
+  
   const featured = salons.slice(0, 2)
+
+  const handleLocationRequest = () => {
+    if (!navigator.geolocation) {
+      setLocationStatus('denied')
+      return
+    }
+
+    setLocationStatus('requesting')
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        setUserLocation({
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude
+        })
+        setLocationStatus('granted')
+        // Mock: show all salons as nearby
+        setNearbySalons(salons)
+      },
+      () => {
+        setLocationStatus('denied')
+      }
+    )
+  }
 
   return (
     <div className="home-page">
@@ -20,7 +48,7 @@ export default function Home() {
           <SearchBar value={search} onChange={(e) => setSearch(e.target.value)} />
           <div className="hero-actions">
             <Link to="/salons" className="button button-primary">Explore salons</Link>
-            <Link to="/ai-assistant" className="button button-secondary">Meet AI stylist</Link>
+            <Link to="/ai-hairstyle-preview" className="button button-secondary">Try hairstyles</Link>
           </div>
         </div>
         <div className="hero-image" />
@@ -65,6 +93,43 @@ export default function Home() {
             <TestimonialCard key={testimonial.name} testimonial={testimonial} />
           ))}
         </div>
+      </section>
+
+      <section className="section-block salons-near-section">
+        <div className="section-heading">
+          <div>
+            <h2>Salons near you</h2>
+            <p>Find beauty services in your area with just one tap.</p>
+          </div>
+        </div>
+        <LocationStatusUI
+          locationStatus={locationStatus}
+          userLocation={userLocation}
+          error={null}
+          onRequestLocation={handleLocationRequest}
+        />
+        {locationStatus === 'granted' && nearbySalons.length > 0 && (
+          <div className="nearby-cta">
+            <Link to="/nearby-salons" className="button button-primary">
+              View All {nearbySalons.length} Salons
+            </Link>
+            <p style={{ color: 'var(--muted)', margin: 0, alignSelf: 'center' }}>
+              Showing salons within your area
+            </p>
+          </div>
+        )}
+      </section>
+
+      <section className="section-block" style={{ background: 'linear-gradient(135deg, rgba(255, 143, 212, 0.12), rgba(156, 140, 255, 0.1))', borderRadius: '2rem', padding: '2.5rem', marginBottom: '2rem' }}>
+        <div className="section-heading" style={{ marginBottom: '1.5rem' }}>
+          <div>
+            <h2>Try hairstyles before you book</h2>
+            <p>Our AI technology lets you preview how different hairstyles look on you.</p>
+          </div>
+        </div>
+        <Link to="/ai-hairstyle-preview" className="button button-primary">
+          Launch AI Preview ✨
+        </Link>
       </section>
 
       <section className="cta-panel">

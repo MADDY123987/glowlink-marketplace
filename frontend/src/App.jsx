@@ -9,6 +9,8 @@ import Register from './pages/Register'
 import ForgotPassword from './pages/ForgotPassword'
 import Dashboard from './pages/Dashboard'
 import AIAssistant from './pages/AIAssistant'
+import AIHairstylePreview from './pages/AIHairstylePreview'
+import NearbySalons from './pages/NearbySalons'
 import About from './pages/About'
 import Contact from './pages/Contact'
 import NotFound from './pages/NotFound'
@@ -23,6 +25,8 @@ function App() {
           <Route path="salons" element={<Salons />} />
           <Route path="salons/:id" element={<SalonDetails />} />
           <Route path="booking/*" element={<Booking />} />
+          <Route path="ai-hairstyle-preview" element={<AIHairstylePreview />} />
+          <Route path="nearby-salons" element={<NearbySalons />} />
           <Route path="login" element={<Login />} />
           <Route path="register" element={<Register />} />
           <Route path="forgot-password" element={<ForgotPassword />} />

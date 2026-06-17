@@ -3,6 +3,8 @@ import { NavLink } from 'react-router-dom'
 const links = [
   { label: 'Home', to: '/' },
   { label: 'Salons', to: '/salons' },
+  { label: '✨ Try Hairstyles', to: '/ai-hairstyle-preview' },
+  { label: '📍 Nearby', to: '/nearby-salons' },
   { label: 'AI Assistant', to: '/ai-assistant' },
   { label: 'About', to: '/about' },
   { label: 'Contact', to: '/contact' },
