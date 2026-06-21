@@ -1,64 +1,52 @@
 package com.glowlink.marketplace.Controller;
 
 import com.glowlink.marketplace.Model.User;
-import com.glowlink.marketplace.Repository.UserRepository;
 import com.glowlink.marketplace.Service.UserService;
+import com.glowlink.marketplace.exception.UserException;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/users")
+@RequiredArgsConstructor
 public class UserController {
 
-    @Autowired
-    private UserService userService;
-    @Autowired
-    private UserRepository userRepository;
+    private final UserService userService;
 
     // POST Request
     @PostMapping
-    public User createUser(@RequestBody @Valid User user) {
-        return userService.createUser(user);
+    public ResponseEntity<User> createUser(@RequestBody @Valid User user) {
+        User createdUser=userService.createUser(user);
+        return new ResponseEntity<>(createdUser, HttpStatus.CREATED);
     }
 
     // GET Request (All Users)
     @GetMapping
-    public List<User> getAllUsers() {
-        return userService.getAllUsers();
+    public ResponseEntity<List<User>> getAllUsers() {
+        List<User> users=userService.getAllUsers();
+        return new ResponseEntity<>(users,HttpStatus.OK);
     }
+
     @GetMapping("/id/{userId}")
-    public User getUserById(@PathVariable Long userId) {
-        return userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+    public ResponseEntity<User> getUserById(@PathVariable Long userId) throws UserException {
+        User user=userService.getUserById(userId);
+        return new ResponseEntity<>(user,HttpStatus.OK);
     }
-    @GetMapping("/test/{userId}")
-    public String test(@PathVariable Long userId) {
-        return "ID = " + userId;
-    }
+
     @PutMapping("/id/{id}")
-    public User updateUser(@RequestBody User user,
-                           @PathVariable Long id) throws Exception{
-        Optional<User> otp=userRepository.findById(id);
-        if(otp.isEmpty()){
-            throw new Exception("user not found with id"+id);
-        }
-        User existingUser=otp.get();
-        existingUser.setFullName(user.getFullName());
-        existingUser.setEmail(user.getEmail());
-        existingUser.setRole(user.getRole());
-        return userRepository.save(existingUser);
+    public ResponseEntity<User> updateUser(@RequestBody User user,
+                           @PathVariable Long id) throws UserException{
+        User updatedUser=userService.updateUser(id, user);
+        return new ResponseEntity<>(updatedUser,HttpStatus.OK);
     }
     @DeleteMapping("/id/{id}")
-    public String deleteUserById(@PathVariable Long id)throws Exception{
-        Optional<User>otp=userRepository.findById(id);
-        if(otp.isEmpty()){
-            throw new Exception("User Not Found with id"+id);
-        }
-        userRepository.deleteById(otp.get().getId());
-        return "User Deleted";
+    public ResponseEntity<String> deleteUserById(@PathVariable Long id)throws UserException{
+        userService.deleteUser(id);
+        return new ResponseEntity<>("User Deleted",HttpStatus.ACCEPTED);
     }
 }
