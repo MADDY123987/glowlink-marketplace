@@ -23,7 +23,7 @@ public class SalonServiceImpl implements SalonService {
         salon.setEmail(req.getEmail());
         salon.setCity(req.getCity());
         salon.setImages(req.getImages());
-        salon.setOwnerId(req.getId());
+        salon.setOwnerId(user.getId());
         salon.setOpenTime(req.getOpenTime());
         salon.setCloseTime(req.getCloseTime());
         salon.setPhoneNumber(req.getPhoneNumber());
@@ -32,18 +32,22 @@ public class SalonServiceImpl implements SalonService {
 
     @Override
     public Salon updateSalon(SalonDTO salon, UserDTO user, Long salonId) throws Exception {
-        Salon existingsalon=salonRepository.findById(salonId).orElseThrow(null);
-        if(existingsalon!=null && salon.getOwnerId().equals(user.getId())){
-            existingsalon.setName(salon.getName());
-            existingsalon.setAddress(salon.getAddress());
-            existingsalon.setEmail(salon.getEmail());
-            existingsalon.setCity(salon.getCity());
-            existingsalon.setImages(salon.getImages());
-            existingsalon.setOwnerId(user.getId());
-            existingsalon.setOpenTime(salon.getOpenTime());
-            existingsalon.setCloseTime(salon.getCloseTime());
-            existingsalon.setPhoneNumber(salon.getPhoneNumber());
-        }throw new Exception("Salon Not Exist");
+
+        Salon existingSalon = salonRepository.findById(salonId)
+                .orElseThrow(() -> new Exception("Salon not found"));
+
+        if (!existingSalon.getOwnerId().equals(user.getId())) {
+            throw new Exception("Unauthorized");
+        }
+        existingSalon.setName(salon.getName());
+        existingSalon.setAddress(salon.getAddress());
+        existingSalon.setEmail(salon.getEmail());
+        existingSalon.setCity(salon.getCity());
+        existingSalon.setImages(salon.getImages());
+        existingSalon.setOpenTime(salon.getOpenTime());
+        existingSalon.setCloseTime(salon.getCloseTime());
+        existingSalon.setPhoneNumber(salon.getPhoneNumber());
+        return salonRepository.save(existingSalon);
     }
 
     @Override
@@ -53,11 +57,8 @@ public class SalonServiceImpl implements SalonService {
 
     @Override
     public Salon getSalonById(Long salonId) throws Exception {
-        Salon salon=salonRepository.findById(salonId).orElse(null);
-        if(salon==null){
-            throw  new Exception("Salon Does not Exist");
-        }
-        return salon;
+        return salonRepository.findById(salonId)
+                .orElseThrow(() -> new Exception("Salon Does not Exist"));
     }
 
     @Override
