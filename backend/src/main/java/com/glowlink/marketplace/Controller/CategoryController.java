@@ -26,7 +26,7 @@ public class CategoryController {
         return ResponseEntity.ok(categories);
     }
 
-    @GetMapping("/salon/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity <Category> getCategoryById(
             @PathVariable Long id
     ) throws Exception {
