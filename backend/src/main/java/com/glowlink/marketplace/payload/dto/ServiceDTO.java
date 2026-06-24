@@ -1,7 +1,9 @@
 package com.glowlink.marketplace.payload.dto;
 
 import jakarta.persistence.Column;
+import lombok.Data;
 
+@Data
 public class ServiceDTO {
     private Long id;
 
