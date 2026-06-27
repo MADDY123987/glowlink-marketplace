@@ -27,7 +27,7 @@ public class BookingServiceImpl implements BookingService {
         int totalDuration=serviceDTOSet.stream()
                 .mapToInt(ServiceDTO::getDuration)
                 .sum();
-        LocalDateTime bookingStartTime=booking.getStartTime();
+        LocalDateTime bookingStarte=booking.getStartTime();
         LocalDateTime bookingEndTime=bookingStartTime.plusMinutes(totalDuration);
     }
 
