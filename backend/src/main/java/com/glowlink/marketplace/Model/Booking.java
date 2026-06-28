@@ -4,6 +4,7 @@ import com.glowlink.marketplace.domain.BookingStatus;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Set;
 
@@ -17,13 +18,13 @@ public class Booking {
     private Long salonId;
 
     private Long customerId;
-    private LocalTime startTime;
-    private LocalTime endTime;
+    private LocalDateTime startTime;
+    private LocalDateTime endTime;
 
     @ElementCollection
     private Set<Long> serviceIds;
 
     private BookingStatus status=BookingStatus.PENDING;
 
-    private int totalServices;
+    private int totalPrices;
 }
