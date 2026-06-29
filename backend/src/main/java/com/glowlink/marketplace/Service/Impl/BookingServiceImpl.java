@@ -110,9 +110,10 @@ public class BookingServiceImpl implements BookingService {
         if(date==null){
             return allBookings;
         }
-        allBookings.stream().filter(booking -> isSameDate(booking.getStartTime(),date) ||
+        return allBookings.stream().filter(booking -> isSameDate(booking.getStartTime(),date) ||
                     isSameDate(booking.getEndTime(),date))
                 .collect(Collectors.toList());
+
 
     }
     private boolean isSameDate(LocalDateTime dateTime,LocalDate date){
@@ -130,6 +131,16 @@ public class BookingServiceImpl implements BookingService {
         List<Booking> cancelledBookings=bookings.stream()
                 .filter(booking -> booking.getStatus().equals(BookingStatus.CANCELLED))
                 .collect(Collectors.toList());
+        Double totalRefund=cancelledBookings.stream()
+                .mapToDouble(Booking::getTotalPrices)
+                .sum();
+        SalonReport report=new SalonReport();
+        report.setSalonId(salonId);
+        report.setCancelledBookings(cancelledBookings.size());
+        report.setTotalBookings(totalBooking);
+        report.setTotalEarnings(totalEarnings);
+        report.setTotalRefund(totalRefund);
 
+        return report;
     }
 }
