@@ -2,12 +2,15 @@ package com.glowlink.marketplace.Controller;
 
 import com.glowlink.marketplace.Mapper.BookingMapper;
 import com.glowlink.marketplace.Model.Booking;
+import com.glowlink.marketplace.Model.SalonReport;
 import com.glowlink.marketplace.Service.BookingService;
+import com.glowlink.marketplace.domain.BookingStatus;
 import com.glowlink.marketplace.payload.dto.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -81,4 +84,43 @@ public class BookingController {
         Booking bookings=bookingService.getBookingById(bookingId);
         return ResponseEntity.ok(BookingMapper.toBookingDTO(bookings));
     }
+
+    @PutMapping("/{bookingId}/status")
+    public ResponseEntity<BookingDTO> updateBookingStatus(
+            @PathVariable Long bookingId,
+            @RequestParam BookingStatus status
+            ) throws Exception
+    {
+        Booking booking=bookingService.updateBooking(bookingId,status);
+        return ResponseEntity.ok(BookingMapper.toBookingDTO(booking));
+    }
+
+    @GetMapping("/slots/salon/{salonId}/date/{date}")
+    public ResponseEntity<List<BookingSlotDTO>> getBookedSlot(
+            @PathVariable Long salonId,
+            @RequestParam(required = false) LocalDate date) {
+
+        List<Booking> bookings = bookingService.getBookingByDate(date, salonId);
+
+        List<BookingSlotDTO> slotDTOS = bookings.stream()
+                .map(booking -> {
+                    BookingSlotDTO slotDTO = new BookingSlotDTO();
+                    slotDTO.setStartTime(booking.getStartTime());
+                    slotDTO.setEndTime(booking.getEndTime());
+                    return slotDTO;
+                })
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(slotDTOS);
+    }
+
+    @GetMapping("/report")
+    public ResponseEntity<SalonReport> getSalonReport(
+
+    ){
+        SalonReport report=bookingService.getSalonReport(1L);
+        return ResponseEntity.ok(report);
+    }
+
+
 }
