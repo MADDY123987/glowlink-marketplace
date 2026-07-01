@@ -24,3 +24,12 @@ spring:
 
 server:
   port: 8080
+
+razorpay:
+  api:
+    key: ""
+    secret: ""
+
+stripe:
+  api:
+    key: ""
